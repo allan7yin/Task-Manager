@@ -74,11 +74,12 @@ userSchema.methods.generateAuthToken = async function () {
 
 userSchema.methods.toJSON = function () {
     const userObject = this.toObject(); // Mongoose methods, turns the user calling this method into an object 
+
     delete userObject.password;
     delete userObject.tokens;
+    delete userObject.avatar;
 
     return userObject;
-
 }
 
 userSchema.statics.findByCredentials = async (email, password) => {

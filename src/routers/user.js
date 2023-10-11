@@ -3,6 +3,7 @@ const auth = require('../middleware/auth');
 const User = require('..//models/user');
 const multer = require('multer');
 const router = new express.Router();
+const sharp = require('sharp');
 
 
 router.post('/users', async (req, res) => {
@@ -106,7 +107,10 @@ const upload = multer({
 
 
 router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => { // multiple middleware 
-    req.user.avatar = req.file.buffer; // can only access file.buffer when  we are not using dest 
+    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
+    // .png converts it to a png format, resize is self-explanatory 
+
+    req.user.avatar = buffer;
     await req.user.save();
     res.send();
 }, (error, req, res, next) => {
